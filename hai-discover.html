@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+			
+		<div class="mui-content">
+		    <ul class="mui-table-view">
+			    <li class="mui-table-view-cell mui-media">
+		            <img class="mui-media-object mui-pull-left" src="image/friends.png" 
+		            	style="height: 24px;width: 24px;">
+		            <p class="mui-ellipsis" 
+		            	style="padding-left: 10px;line-height: 24px;color: #000000;">朋友圈</p>
+			    </li>
+			</ul>
+			
+			<br />
+		
+			<ul class="mui-table-view">
+			   <li class="mui-table-view-cell mui-media" id="addFriends">
+		            <img class="mui-media-object mui-pull-left" src="image/addfriends.png" 
+		            	style="height: 24px;width: 24px;">
+		            <p class="mui-ellipsis" 
+		            	style="padding-left: 10px;line-height: 24px;color: #000000;">添加好友</p>
+			    </li>
+			    <li class="mui-table-view-cell mui-media">
+		            <img class="mui-media-object mui-pull-left" src="image/scanscan.png" 
+		            	style="height: 24px;width: 24px;">
+		            <p class="mui-ellipsis" 
+		            	style="padding-left: 10px;line-height: 24px;color: #000000;">扫一扫</p>
+			    </li>
+			</ul>
+		</div>			
+		
+		
+			
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			mui.plusReady(function(){
+				
+				//事件监听添加好友
+				var addFriends = document.getElementById("addFriends");
+				addFriends.addEventListener("tap",function(){
+					mui.openWindow({
+						url:"searchFriends.html",
+						id:"searchFriends.html",
+					});
+				})
+			})
+		</script>
+	</body>
+
+</html>

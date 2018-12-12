@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/header.css" />
+	</head>
+
+	<body>
+		
+		<header class="mui-bar mui-bar-nav title">
+		    <a id="backMe" class="mui-action0-back mui-icon mui-icon-left-nav mui-pull-left title-color"></a>
+		    <a id="openMenu" class="mui-icon mui-icon-right-nav  mui-pull-right title-color" style="line-height: 15px;">...</a>
+		    <h1 class="mui-title title-color"><b>个人头像</b></h1>
+		</header>
+		
+		<div class="mui-content">
+		    <img id="myface" src="image/bg.png" />
+		</div>
+		
+		<div id="sheet-myface" class="mui-popover mui-popover-bottom mui-popover-action ">
+		    <!-- 可选择菜单 -->
+		    <ul class="mui-table-view">
+		      <li class="mui-table-view-cell">
+		        <a id="selectImage" >选择照片</a>
+		      </li>
+		      <li class="mui-table-view-cell">
+		        <a id="downLoadImage">下载照片</a>
+		      </li>
+		    </ul>
+		    <!-- 取消菜单 -->
+		    <ul class="mui-table-view">
+		      <li class="mui-table-view-cell">
+		        <a href="#sheet-myface"><b>取消</b></a>
+		      </li>
+		    </ul>
+		</div>
+		
+		
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/app.js" ></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			mui.plusReady(function(){
+				
+				//退回
+				var backMe = document.getElementById("backMe");
+				backMe.addEventListener("tap",function(){
+					mui.back();
+				})
+				
+				//刷新个人头像
+				refreshBigImage();
+				
+				//window自定义监听
+				window.addEventListener("refreshBigImage",function (){
+					refreshBigImage();
+				})
+				
+				
+				//获取手机的可见的宽度,设置大图的高和宽
+				var bodyWidth = document.body.clientWidth;
+				myface.width = bodyWidth;
+				myface.height = bodyWidth;
+				
+				//右上打开菜单监听事件
+				var openMenu = document.getElementById('openMenu');
+				openMenu.addEventListener('tap',function(){
+					mui('#sheet-myface').popover('toggle');
+				})
+				
+				//上传图片监听事件
+				var selectImage = document.getElementById('selectImage');
+				selectImage.addEventListener('tap',function(){
+					mui.openWindow({
+						url:'plugin/v3.1.6/myface-uploader.html',
+						id:'myface-uploader.html',
+						createNew:true
+					});
+					mui('#sheet-myface').popover('toggle');
+				})
+				
+				//下载图片事件监听
+				var downLoadImage = document.getElementById('downLoadImage');
+				//创建下载图片的任务
+				downLoadImage.addEventListener('tap',function(){
+					
+					plus.nativeUI.showWaiting("下载中");
+					var userInfo = app.getGrobalUserInfo();
+					var url = app.imgServerUrl + userInfo.faceImageBig;
+					
+					console.log("下载地址"+url);
+					
+					var dtask = plus.downloader.createDownload(url,{},function(download,status){
+							plus.nativeUI.closeWaiting();
+							if(status == 200){
+								var temPath = download.filename;
+								plus.gallery.save(temPath,function(){
+									app.showToast("下载成功","success");
+								})
+							}else{
+								app.showToast("下载失败","error");
+								console.log("下载错误")
+							}
+					})
+					//启动任务
+					dtask.start();
+				})
+				
+			})
+			
+			//刷新big个人头像方法定义
+			function refreshBigImage(){
+				var userInfo = app.getGrobalUserInfo();
+				var myface  = document.getElementById('myface');
+				
+				if(!app.isBlank(userInfo)){
+					//faceImage不会空的话
+					var faceImageBig = userInfo.faceImageBig;
+					if(!app.isBlank(faceImageBig)){
+						
+						myface.src = app.imgServerUrl+userInfo.faceImageBig;
+					}
+				}
+			}
+		</script>
+	</body>
+
+</html>

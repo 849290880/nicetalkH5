@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/header.css" />
+		<style>
+			.mui-btn-success{
+				color: white;
+				background-color: green;
+				font-size: 20px;
+			}
+			.mui-btn-outlined{
+				color: black;
+				font-size: 20px;
+			}
+		</style>
+	</head>
+
+	<body>
+		
+		<header class="mui-bar mui-bar-nav title">
+		    <a id="backMe" class="mui-action0-back mui-icon mui-icon-left-nav mui-pull-left title-color"></a>
+		    <h1 class="mui-title title-color"><b>添加好友</b></h1>
+		</header>
+		
+		<div class="mui-content">
+		    <ul class="mui-table-view" style="height: 120px;padding: 20px 20px 20px 20px;">
+		        <li class="mui-table-view-cell mui-media">
+		            <a href="javascript:;">
+		                <img id="userImage" class="mui-media-object mui-pull-left" src="http://placehold.it/80x80"
+		                	style="border-radius: 8%;line-height: 50px;max-width: 60px;height: 60px;">
+		                <div class="mui-media-body" style="margin-top: 10px;">
+		                    <span id="username_span"></span>
+		                    <p class="mui-ellipsis" id="nickname_p"></p>
+		                </div>
+		            </a>
+		        </li>
+		    </ul>
+		    
+		    <br />
+		    
+		    <button type="button" class="mui-btn mui-btn-success" id="beFriends" 
+		    	style="width: 80%;height: 60px;margin-left: 10%;">添加</button>
+		    <button type="button" class="mui-btn mui-btn-outlined" id="button_back"
+		    	style="width: 80%;height: 60px;margin-left: 10%; margin-top: 20px;">返回</button>
+		</div>
+		
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/app.js" ></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			mui.plusReady(function(){
+				
+				//页面信息加载
+				var webview = plus.webview.currentWebview();
+				var friendsInfo = webview.friendsInfo;
+				//用户名
+				var username_span = document.getElementById("username_span");
+				username_span.innerHTML=friendsInfo.username;
+				//用户昵称
+				var nickname_p = document.getElementById("nickname_p");
+				nickname_p.innerHTML = "nicktalk号:"+friendsInfo.nickname;
+				//用户头像
+				var userImage = document.getElementById("userImage");
+				userImage.src = app.imgServerUrl + friendsInfo.faceImage;
+				
+				//退回
+				var backMe = document.getElementById("backMe");
+				backMe.addEventListener("tap",function(){
+					mui.back();
+				})
+				
+				//返回监听
+				var button_back = document.getElementById("button_back");
+				button_back.addEventListener("tap",function(){
+					mui.back();
+				})
+				
+				//添加好友
+				var beFriends = document.getElementById("beFriends");
+				beFriends.addEventListener("tap",function(){
+					
+					//我的个人信息
+					var userInfo = app.getGrobalUserInfo();
+					
+					mui.ajax(app.serverUrl+'/u/addRequest',{
+						data:{
+							userId:userInfo.id,
+							friendName:friendsInfo.username,
+						},
+						dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；
+						headers:{'Content-Type':'application/x-www-form-urlencoded '},	              
+						success:function(res){
+							
+							plus.nativeUI.closeWaiting();
+							
+							console.log(res.status == 200);
+							
+							if(res.status == 200){
+								app.showToast(res.msg,"success");
+								
+								mui.back();
+							}else{
+								app.showToast(res.msg,"error");
+							}
+						},
+						error:function(){
+							plus.nativeUI.closeWaiting();
+							app.showToast("请求错误","error");
+						}
+					});
+					
+					
+				})
+			})
+		</script>
+	</body>
+
+</html>

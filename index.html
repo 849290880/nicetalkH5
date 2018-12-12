@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="fontico/iconfont.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
+      	
+      	//页面加载完成，调用原生api
+      	mui.plusReady(function(){
+      		plus.navigator.setStatusBarStyle('light');
+      		plus.navigator.setStatusBarBackground('#C9394A');
+      	})
+      	
+    </script>
+</head>
+<body>
+	
+	<header class="mui-bar mui-bar-nav title">
+	    <h1 class="mui-title title-color"><b>NiceTalk</b></h1>
+	</header>
+	
+	
+	<nav class="mui-bar mui-bar-tab">
+	    <a class="mui-tab-item mui-active" tabindex="0">
+	        <span class="mui-icon iconfont icon-weixin"></span>
+	        <span class="mui-tab-label">首页</span>
+	    </a>
+	    <a class="mui-tab-item" tabindex="1">
+	        <span class="mui-icon iconfont icon-tongxunlu"></span>
+	        <span class="mui-tab-label">通讯录</span>
+	    </a>
+	    <a class="mui-tab-item" tabindex="2">
+	        <span class="mui-icon iconfont icon-faxian"></span>
+	        <span class="mui-tab-label">发现</span>
+	    </a>
+	    <a class="mui-tab-item" tabindex="3">
+	        <span class="mui-icon iconfont icon-wo"></span>
+	        <span class="mui-tab-label">我</span>
+	    </a>
+	</nav>
+	
+	<script type="application/javascript" charset="UTF-8">
+		
+		var pageArray = [
+			{
+				pageId:"hai-chatList.html",
+				pageUrl:"hai-chatList.html"
+			},
+			{
+				pageId:"hai-contact.html",
+				pageUrl:"hai-contact.html"
+			},
+			{
+				pageId:"hai-discover.html",
+				pageUrl:"hai-discover.html"
+			},
+			{
+				pageId:"hai-me.html",
+				pageUrl:"hai-me.html"
+			}
+		];
+		
+		//设置子窗口的样式
+		var pageStyle={
+			top: "44px",
+			bottom:"50px"
+		}
+		
+	
+		//创建webview并将webview加入主页
+		mui.plusReady(function(){
+			
+			//重写mui.back方法防止android的返回按键的触发
+			mui.back = function(){
+				return false;
+			}
+			
+			//获取当前的webview对象
+			var curWebview=plus.webview.currentWebview();
+			
+			//创建四个webview
+			for (var i = 0 ;i<pageArray.length;i++) {
+				var pageWebview = plus.webview.create(pageArray[i].pageUrl,pageArray[i].pageId,pageStyle);
+				
+				//隐藏
+				pageWebview.hide();
+				
+				//追加进当前的webview对象
+				curWebview.append(pageWebview);
+			}
+			
+			//默认显示页面
+			plus.webview.show(pageArray[0].pageId);
+			
+			
+			//批量事件的绑定
+			mui(".mui-bar.mui-bar-tab").on('tap','a',function(){
+				
+				var tabindex = this.getAttribute('tabindex');
+				
+				
+				//显示绑定事件的webview
+				plus.webview.show(pageArray[tabindex].pageId,'fade-in',200);
+			
+				//隐藏其他的webview
+				for (var i = 0 ;i<pageArray.length;i++) {
+					if(i!=tabindex){
+						plus.webview.hide(pageArray[i].pageId,'fade-out',200);
+					}
+				}
+				
+			})
+			
+		})
+	</script>
+	
+</body>
+</html>

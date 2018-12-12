@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/header.css" />
+	
+		<style>
+			.mui-content {
+				position: absolute;
+				top: 44px;
+				width: 100%;
+				background: #2e3132;
+				bottom: 0px;
+			}
+		</style>
+		
+	</head>
+	
+	<body>
+		<header class="mui-bar mui-bar-nav title" style="position: fixed;">
+		    <a id="backMe" class="mui-action0-back mui-icon mui-icon-left-nav mui-pull-left title-color"></a>
+		    <a id="openMenu" class="mui-icon mui-icon-right-nav  mui-pull-right title-color" style="line-height: 25px;">
+		    	<img src="image/download.png" width="14px" height="14px"/></a>
+		    <h1 class="mui-title title-color"><b>二维码</b></h1>
+		</header>
+		
+		<div class="mui-content" style="padding: 80px 30px 0px 30px;">
+			<div style="background-color:white;padding-left: 20px;padding-top: 20px;" >
+				<img id="faceImg" src="" width="60px" style="border-radius: 8%;float: left;"/>
+				<label id="nickname" style="float: left;margin-left: 10px;
+					margin-top: 10px;">nickname</label>
+			</div>
+			<div style="background-color: white;text-align: center;">
+				<img id="qrCode" src="" />
+			</div>
+		    <div style="background-color: white;text-align: center;">
+		    	<p style="padding-bottom: 10px;font-size: 12px;">
+		    		扫一扫上面的二维码图案，加我nicetalk</p>
+		    </div>
+		</div>
+		
+		<div id="my_sheet" class="mui-popover mui-popover-bottom mui-popover-action ">
+		    <!-- 可选择菜单 -->
+		    <ul class="mui-table-view">
+		      <li class="mui-table-view-cell">
+		        <a id="downloadQRCode" >下载</a>
+		      </li>
+		    </ul>
+		    <!-- 取消菜单 -->
+		    <ul class="mui-table-view">
+		      <li class="mui-table-view-cell">
+		        <a href="#my_sheet"><b>取消</b></a>
+		      </li>
+		    </ul>
+		</div>
+				
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/app.js" ></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			mui.plusReady(function(){
+				//退回
+				var backMe = document.getElementById("backMe");
+				backMe.addEventListener("tap",function(){
+					mui.back();
+				})
+				
+				//获取用户二维码路径
+				var user = app.getGrobalUserInfo();
+				var qrPath = user.qrcode;
+				//显示二维码	
+				var qrCode = document.getElementById("qrCode");
+				qrCode.src = app.imgServerUrl + qrPath;
+				//显示头像
+				var faceImg = document.getElementById("faceImg");
+				faceImg.src = app.imgServerUrl + user.faceImage;
+				
+				var openMenu = document.getElementById("openMenu");
+				openMenu.addEventListener("tap",function(){
+					
+					var downloadQRCode = document.getElementById("downloadQRCode")
+					downloadQRCode.addEventListener("tap",function(){
+						
+					//下载qrCode
+					//创建下载图片的任务
+					plus.nativeUI.showWaiting("下载中");
+					var url = app.imgServerUrl + qrPath;
+					
+					console.log("下载地址"+url);
+					
+					var dtask = plus.downloader.createDownload(url,{},function(download,status){
+							plus.nativeUI.closeWaiting();
+							if(status == 200){
+								var temPath = download.filename;
+								plus.gallery.save(temPath,function(){
+									app.showToast("下载成功","success");
+								})
+							}else{
+								app.showToast("下载失败","error");
+								console.log("下载错误")
+							}
+					})
+					//启动任务
+					dtask.start();
+					})
+					mui('#my_sheet').popover('toggle');
+				});
+			})
+			
+		</script>
+	</body>
+
+</html>

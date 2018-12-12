@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		
+		<div class="mui-content">
+		    <ul class="mui-table-view" id="friendsList">
+		        
+		    </ul>
+		</div>
+				
+		<script src="js/mui.min.js"></script>
+		<script src="js/app.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			mui.plusReady(function(){
+
+				//获取用户对象
+				var userInfo = app.getGrobalUserInfo();
+								
+				refreshData(userInfo.id);
+								
+				//监听当前页面onshow
+				var currentWebview = plus.webview.currentWebview();
+				currentWebview.addEventListener("show",function(){
+					//加载请求好友的数据
+					refreshData(userInfo.id);		
+				})
+				
+			});
+			
+			function refreshData(userId){
+				if(app.isBlank(userId)){
+					app.showToast("非法操作","error");
+					return;
+				}
+				plus.nativeUI.showWaiting("请稍后...");
+				mui.ajax(app.serverUrl+'/u/queryRequestFriends',{
+					data:{
+						userId:userId
+					},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:10000,//超时时间设置为10秒；
+					headers:{'Content-Type':'application/x-www-form-urlencoded '},	              
+					success:function(res){
+						
+						plus.nativeUI.closeWaiting();
+						
+						if(res.status == 200){
+							var friendsList = document.getElementById("friendsList");
+							friendsList.innerHTML = "";
+							//好友申请数组
+							var list = res.data;
+							var requestAll = "";
+							for(var i=0;i<list.length;i++){
+								requestAll += renderFriendRequest(list[i]);
+							}
+							friendsList.innerHTML=requestAll;
+						}else{
+							app.showToast(res.msg,"error");
+						}
+					},
+					error:function(){
+						plus.nativeUI.closeWaiting();
+						app.showToast("网络问题","error");
+					}
+				});
+			}
+			
+			function renderFriendRequest(RequestFriends){
+				var html = "";
+				html ='<li class="mui-table-view-cell mui-media" style="height: 80px;padding: 13px 20px 10px 20px;">'+
+					'<img class="mui-media-object mui-pull-left" src="'+app.imgServerUrl+RequestFriends.faceImage+'" style="max-width: 50px;height: 50px;border-radius: 8%";">'+
+					'<div class="mui-media-body">'+
+					'<label>'+RequestFriends.nickname+'</label>'+
+					'<p class="mui-ellipsis">nicetalk:'+RequestFriends.username+'</p>'+
+					'</div>'+
+					'<span class="mui-pull-right" style="margin-top:-30px;">'+
+					'<button type="button" class="mui-btn mui-btn-danger"style="margin-right:10px">忽略</button>'+
+					'<button type="button" class="mui-btn mui-btn-success">同意</button>'+
+					'</span>'+
+					'</li>';
+				return html;
+			}
+		</script>
+	</body>
+
+</html>
