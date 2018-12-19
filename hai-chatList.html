@@ -35,11 +35,17 @@
 					refreshData(userInfo.id);		
 				})
 				
+				//自定义刷新事件
+				window.addEventListener("refresh",function(){
+					refreshData();
+					//初始化socket模型
+					CHAT.init();
+				})	
+				
 			});
 			
 			function refreshData(userId){
 				if(app.isBlank(userId)){
-					app.showToast("非法操作","error");
 					return;
 				}
 				plus.nativeUI.showWaiting("请稍后...");
@@ -64,7 +70,21 @@
 							for(var i=0;i<list.length;i++){
 								requestAll += renderFriendRequest(list[i]);
 							}
+							//渲染页面
 							friendsList.innerHTML=requestAll;
+							
+							var userInfo = app.getGrobalUserInfo();
+							//绑定忽略事件
+							mui(".operRequest").on("tap",'.agree',function(){
+								var friendsId = this.getAttribute("friendsId");
+								requestOperation(friendsId,userInfo.id,1);
+							});
+							//绑定同意事件
+							mui(".operRequest").on("tap",'.ignore',function(e){
+								var friendsId = this.getAttribute("friendsId");
+								requestOperation(friendsId,userInfo.id,-1);
+							});
+							
 						}else{
 							app.showToast(res.msg,"error");
 						}
@@ -74,23 +94,117 @@
 						app.showToast("网络问题","error");
 					}
 				});
+				
 			}
 			
 			function renderFriendRequest(RequestFriends){
 				var html = "";
-				html ='<li class="mui-table-view-cell mui-media" style="height: 80px;padding: 13px 20px 10px 20px;">'+
+				html ='<li class="mui-table-view-cell mui-media operRequest" style="height: 80px;padding: 13px 20px 10px 20px;">'+
 					'<img class="mui-media-object mui-pull-left" src="'+app.imgServerUrl+RequestFriends.faceImage+'" style="max-width: 50px;height: 50px;border-radius: 8%";">'+
 					'<div class="mui-media-body">'+
 					'<label>'+RequestFriends.nickname+'</label>'+
 					'<p class="mui-ellipsis">nicetalk:'+RequestFriends.username+'</p>'+
 					'</div>'+
 					'<span class="mui-pull-right" style="margin-top:-30px;">'+
-					'<button type="button" class="mui-btn mui-btn-danger"style="margin-right:10px">忽略</button>'+
-					'<button type="button" class="mui-btn mui-btn-success">同意</button>'+
+					'<button type="button" friendsId="'+RequestFriends.id+'" class="mui-btn mui-btn-danger ignore"style="margin-right:10px">忽略</button>'+
+					'<button type="button" friendsId="'+RequestFriends.id+'" class="mui-btn mui-btn-success agree">同意</button>'+
 					'</span>'+
 					'</li>';
 				return html;
 			}
+			
+			//同意或者忽略请求的函数
+			function requestOperation(friendsId,userId,operType){
+				plus.nativeUI.showWaiting("请稍后...");
+				mui.ajax(app.serverUrl+'/u/handlerAddRequest',{
+					data:{
+						userId:userId,
+						friendsId:friendsId,
+						operType:operType
+					},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:10000,//超时时间设置为10秒；
+					headers:{'Content-Type':'application/x-www-form-urlencoded'},	              
+					success:function(res){
+						
+						plus.nativeUI.closeWaiting();
+						
+						if(res.status == 200){
+							//更新通讯录
+							app.saveReadyGroupFriends(res.data);
+							//刷新当前的页面
+							refreshData(userId);
+						}else{
+							app.showToast(res.msg,"error");
+						}
+					},
+					error:function(){
+						plus.nativeUI.closeWaiting();
+						app.showToast("网络问题","error");
+					}
+				});
+				
+			}
+			
+			
+			//构建websocket对象进行聊天
+			window.CHAT = {
+	            socket: null,
+	            init:function( ) {
+	                if(window.WebSocket){
+	                	//假如客户端已经存在就不再建立socket
+	                	if(CHAT.socket != null && CHAT.socket != undefined && CHAT.socket.readyState == window.WebSocket.OPEN){
+	                		return false;
+	                	}
+	                    CHAT.socket = new WebSocket(app.nettyUrl);
+	
+	                    CHAT.socket.onopen = CHAT.socketOpen;
+	                    
+	                    CHAT.socket.onclose =CHAT.socketClose;
+	                    
+	                    CHAT.socket.onerror =CHAT.socketError;
+	
+	                    CHAT.socket.onmessage =CHAT.socketMessage;
+						
+	                }else{
+	                    alert("手机设备过旧，换一台吧~~~");
+	                }
+	            },
+	            chat:function (msg) {
+	            	//假如websocket没有断开就发送消息
+                	if(CHAT.socket != null && CHAT.socket != undefined && CHAT.socket.readyState == window.WebSocket.OPEN){
+                		CHAT.socket.send(msg);
+                	}else{
+                		//重连
+                		CHAT.init();
+                		setTimeout("CHAT.rechat('"+msg+"')",1000);
+                	}
+	                
+	            },
+	            rechat:function(msg){
+	            	CHAT.socket.send(msg);
+	            },
+	            socketOpen: function(){
+	            	console.log("连接上了。。。");
+	            },
+	            socketClose: function(){
+	            	console.log("连接关闭了 。。。");
+	            },
+	            socketError: function(){
+	            	console.log("连接异常");
+	            },
+	            socketMessage: function (e) {
+                    console.log("接收到消息:" + e.data);
+                    //暂时转发给自己和朋友互相聊天的界面
+                    //TODO 动态改变webviewID
+                    var chattingWebview = plus.webview.getWebviewById("chatList_181212AFN2S3G4SW");
+                    
+                    chattingWebview.evalJS("receiveMsg('"+e.data+"')");
+                    chattingWebview.evalJS("showLastMsg()");
+                }
+	        }
+			
 		</script>
 	</body>
 

@@ -22,7 +22,7 @@
 <body>
 	
 	<header class="mui-bar mui-bar-nav title">
-	    <h1 class="mui-title title-color"><b>NiceTalk</b></h1>
+	    <h1 class="mui-title title-color" id="headtitle"><b>NiceTalk</b></h1>
 	</header>
 	
 	
@@ -81,6 +81,9 @@
 				return false;
 			}
 			
+			//监听网络状态
+			listenNetWorkChange();
+			
 			//获取当前的webview对象
 			var curWebview=plus.webview.currentWebview();
 			
@@ -114,10 +117,33 @@
 						plus.webview.hide(pageArray[i].pageId,'fade-out',200);
 					}
 				}
-				
 			})
 			
+			
+			window.setTimeout("initData()","1000");
 		})
+		
+		//监听网络状态的变化
+		function listenNetWorkChange(){
+			document.addEventListener("netchange",function(){
+				var connectionSatus = plus.networkinfo.getCurrentType();
+				if(connectionSatus !=0 && connectionSatus !=1){
+					var headtitle = document.getElementById("headtitle");
+					headtitle.innerHTML = "<b>NiceTalk</b>";
+				}else{
+					var headtitle = document.getElementById("headtitle");
+					headtitle.innerHTML = "<b>NiceTalk(未连接)</b>";
+				}
+			})
+		}
+		
+		//预加载
+		function initData(){
+			var hai_me = plus.webview.getWebviewById("hai-me.html");
+			mui.fire(hai_me,"refresh");
+			var hai_chatList = plus.webview.getWebviewById("hai-chatList.html");
+			mui.fire(hai_chatList,"refresh");
+		}
 	</script>
 	
 </body>

@@ -1,0 +1,343 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/header.css" />
+		<link rel="stylesheet" type="text/css" href="css/chat.css" />
+		<style>
+			html,
+			body {
+				height: 100%;
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+			}
+		</style>
+	</head>
+
+	<body contextmenu="return false;">
+		
+		<header class="mui-bar mui-bar-nav title" style="position: fixed;">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left title-color"></a>
+			<h1 class="mui-title title-color"><b id="chatting-nickname">nicetalk</b></h1>
+		</header>
+		
+		<div id="msg-outter" class="mui-content">
+			<div id='msg'>
+				
+				<div class="friend_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper right">
+						<p class="msg-left-white">晚上过来吃饭？</p>
+					</div>
+				</div>
+
+				<div class="me_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper left">
+						<p class="msg-right-green">好的，没问题！时间地点？</p>
+					</div>
+				</div>
+				
+				<div class="me_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper left">
+						<p class="msg-right-green">好的，没问题！时间地点？</p>
+					</div>
+				</div>
+				
+				<div class="me_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper left">
+						<p class="msg-right-green">好的，没问题！时间地点？</p>
+					</div>
+				</div>
+				
+				<div class="me_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper left">
+						<p class="msg-right-green">好的，没问题！时间地点？</p>
+					</div>
+				</div>
+				
+				<div class="me_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper left">
+						<p class="msg-right-green">好的，没问题！时间地点？</p>
+					</div>
+				</div>
+				
+				<div class="me_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper left">
+						<p class="msg-right-green">好的，没问题！时间地点？</p>
+					</div>
+				</div>
+				
+				<div class="me_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper left">
+						<p class="msg-right-green">好的，没问题！时间地点？</p>
+					</div>
+				</div>
+				
+				<div class="me_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper left">
+						<p class="msg-right-green">好的，没问题！时间地点？</p>
+					</div>
+				</div>
+				
+				<div class="me_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper left">
+						<p class="msg-right-green">好的，没问题！时间地点？</p>
+					</div>
+				</div>
+				
+				<div class="me_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper left">
+						<p class="msg-right-green">好的，没问题！时间地点？</p>
+					</div>
+				</div>
+				
+				<div class="me_lists">
+					<div class="header_img">
+						<img src="image/face-default-cat.png" width="40px" height="40px" />
+					</div>
+					<div class="msg-wrapper left">
+						<p class="msg-right-green">好的，没问题！时间地点？</p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		
+		<footer id="footer">
+			<div class="footer-center">
+				<input id='msg-text' type="text" class='mui-input-clear'></input>
+			</div>
+			<label for="" class="footer-right">
+				<button type="button" class="mui-btn mui-btn-gray" id="send">发送</button>
+			</label>
+		</footer>
+
+		
+		
+		
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/app.js" ></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			mui.plusReady(function(){
+				//将头部修改为nickname
+				setNickname();
+				//设置软键盘的样式
+				setKeyBoard();
+				
+				//显示最新的消息
+				showLastMsg();
+
+				//监听窗口resize事件
+				listenWindowResize();
+				
+				//监听发送的按钮
+				listenSendButton();
+				//监听输入框的内容的改变
+				listenInput();
+			})
+			
+			
+			/**
+			 * 设置软键盘的样式
+			 */
+			function setKeyBoard(){
+				// 获取聊天页面webview
+				var curWebview = plus.webview.currentWebview();
+				// 设置聊天页面的软键盘样式
+				curWebview.setStyle({
+					softinputMode: "adjustResize"
+				});
+			}
+			
+			/**
+			 * 获取这个页面的friendsInfo对象
+			 */
+			function getFriendsInfo(){
+				var curWebview = plus.webview.currentWebview();
+				var friendsInfo = curWebview.friendsInfo;
+				return friendsInfo;
+			}
+			
+			/**
+			 * 修改nickname
+			 */
+			function setNickname(){
+				var friendsInfo = getFriendsInfo();
+				var nickname =document.getElementById("chatting-nickname");
+				nickname.innerHTML = friendsInfo.nickname;
+			}
+			
+			/**
+			 * 显示最新的消息
+			 */
+			function showLastMsg(){
+				var msgDiv = document.getElementById("msg");
+				msgDiv.scrollTop = msgDiv.scrollHeight + msgDiv.offsetHeight;
+			}
+			
+			/**
+			 * 监听发送的按钮
+			 */
+			function listenSendButton(){
+				var send = document.getElementById("send");
+				send.addEventListener("tap",function(){
+					//发送之前判断网络的状态
+					var connectionSatus = plus.networkinfo.getCurrentType();
+					if(connectionSatus ==0||connectionSatus ==1){
+						app.showToast("请打开网络连接...","error");
+						return;
+					}
+					
+					//获取发送的内容
+					var msg_text = document.getElementById("msg-text");
+					var content = msg_text.value;
+					//判断发送的内容
+					if(content.length===0){
+						return;
+					}
+					
+					//渲染发送消息的html
+					var userInfo = app.getGrobalUserInfo();
+					sendMsg(app.imgServerUrl + userInfo.faceImage,content);
+					//清空input的内容
+					msg_text.value = "";
+					//改变按钮的样式
+					send.setAttribute("class","mui-btn-gray");
+					
+					//向netty服务器发送消息
+					var wsWebview = plus.webview.getWebviewById("hai-chatList.html");
+					wsWebview.evalJS("CHAT.chat('"+content+"')");
+					
+					//模拟消息接收
+//					receiveMsg("模拟消息接收");
+				})
+			}
+			
+			/**
+			 * 发送消息的html渲染
+			 */
+			function sendMsg(image,content){
+				var msg = document.getElementById("msg");
+				var html = '<div class="me_lists">'+
+								'<div class="header_img">'+
+									'<img src="'+image+'" width="40px" height="40px" />'+
+								'</div>'+
+								'<div class="msg-wrapper left">'+
+									'<p class="msg-right-green">'+content+'</p>'+
+								'</div>'+
+							'</div>';
+				msg.insertAdjacentHTML("beforeend",html);
+				
+				//播发发送消息的音频
+				playSendAudio();
+			}
+			
+			/**
+			 * 发送消息音频播放的方法
+			 */
+			function playSendAudio(){
+				var sendAudio = plus.audio.createPlayer("/mp3/send.mp3");
+				sendAudio.play();
+			}
+			
+			/**
+			 * 接收消息音频播放的方法
+			 */
+			function playReceiveAudio(){
+				var receiveAudio = plus.audio.createPlayer("/mp3/di_didi.mp3");
+				receiveAudio.play();
+			}
+			
+			
+			/**
+			 * 接收消息的渲染
+			 */
+			function receiveMsg(content){
+				var friendsInfo = getFriendsInfo();
+				var msg = document.getElementById("msg");
+				var html = '<div class="friend_lists">'+
+								'<div class="header_img">'+
+									'<img src="'+app.imgServerUrl+friendsInfo.faceImage+'" width="40px" height="40px" />'+
+								'</div>'+
+								'<div class="msg-wrapper right">'+
+									'<p class="msg-left-white">'+content+'</p>'+
+								'</div>'+
+							'</div>';
+				msg.insertAdjacentHTML("beforeend",html);		
+				
+				//播放接收消息的音频
+				playReceiveAudio();
+			}
+			
+			
+			/**
+			 * 监听输入框的内容，改变输入框的颜色
+			 */
+			function listenInput(){
+				var msg_text = document.getElementById("msg-text");
+				msg_text.addEventListener("input",function(){
+					//改变按钮的颜色
+					var send = document.getElementById("send");
+					if(msg_text.value.length>0){
+						send.setAttribute("class","mui-btn-green");
+					}else{
+						send.setAttribute("class","mui-btn-gray");
+					}
+				})
+			}
+			
+			/**
+			 * 监听窗口resize事件
+			 */
+			function listenWindowResize(){
+				window.addEventListener("resize",function(){
+					//显示最新消息
+					showLastMsg();
+				})
+			}
+			
+		</script>
+	</body>
+
+</html>

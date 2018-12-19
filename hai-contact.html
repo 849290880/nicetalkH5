@@ -6,15 +6,234 @@
 		<title></title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/mui.indexedlist.css" />
+		<style>
+			html,
+			body {
+				height: 100%;
+				overflow: hidden;
+			}
+			.mui-bar {
+				-webkit-box-shadow: none;
+				box-shadow: none;
+			}
+		</style>
 	</head>
 
 	<body>
 		
-		<h1>通讯录</h1>
+		<div class="mui-content">
+			<div id='list' class="mui-indexed-list">
+				<div class="mui-indexed-list-search mui-input-row mui-search">
+					<input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="搜索机场">
+				</div>
+				<div class="mui-indexed-list-bar">
+					<a>A</a>
+					<a>B</a>
+					<a>C</a>
+					<a>D</a>
+					<a>E</a>
+					<a>F</a>
+					<a>G</a>
+					<a>H</a>
+					<a>I</a>
+					<a>J</a>
+					<a>K</a>
+					<a>L</a>
+					<a>M</a>
+					<a>N</a>
+					<a>O</a>
+					<a>P</a>
+					<a>Q</a>
+					<a>R</a>
+					<a>S</a>
+					<a>T</a>
+					<a>U</a>
+					<a>V</a>
+					<a>W</a>
+					<a>X</a>
+					<a>Y</a>
+					<a>Z</a>
+					<a>#</a>
+				</div>
+				<div class="mui-indexed-list-alert"></div>
+				<div class="mui-indexed-list-inner">
+					<div class="mui-indexed-list-empty-alert">没有数据</div>
+					<ul class="mui-table-view" id="AllContactFriends">
+				
+					</ul>
+				</div>
+			</div>
+		</div>
 		
 		<script src="js/mui.min.js"></script>
-		<script type="text/javascript">
+		<script type="text/javascript" src="js/app.js" ></script>
+		<script type="text/javascript" src="js/nickname.js" ></script>
+		<script type="text/javascript" src="js/mui.indexedlist.js" ></script>
+		<script type="text/javascript" src="js/groupHelper.js" ></script>
+		<script type="text/javascript" src="js/map.js" ></script>
+		<script type="text/javascript" charset="utf-8">
 			mui.init()
+			
+			mui.plusReady(function(){
+				
+				//初始化map表
+				contactMap=new Map();
+				
+				//调用后台，得到通讯录，并将数据分组,保存在缓存中,进行页面渲染
+				getReadyRenderFriends();
+				
+				var curwebview = plus.webview.currentWebview();
+				curwebview.addEventListener("show",function(){
+					getReadyRenderFriends();
+				})
+				
+				//批量注册监听事件
+				batchListen();
+			})
+			
+			/**
+			 * 批量注册监听事件
+			 */
+			function batchListen(){
+				mui("#AllContactFriends").on("tap",".mui-indexed-list-item",function(e){
+					
+					var friendsId = this.getAttribute("friendsid");
+					
+					var friendsInfo = contactMap.get(friendsId);
+					//打开对应的页面
+					var chatWindowId = "chatList_"+friendsInfo.id;
+					mui.openWindow({
+						url:"chatting.html",
+						id:chatWindowId,
+						extras:{
+							friendsInfo:friendsInfo
+						}
+					});
+				})
+			}
+			
+			/**
+			 * 整体渲染
+			 */
+			function showList(){
+				var list = document.getElementById('list');
+				list.style.height =document.body.offsetHeight+'px';
+				window.indexedList = new mui.IndexedList(list);
+				
+				//从缓存中取出allReadyFriends对象，进行渲染
+				var allReadyFriends = app.getReadyGroupFriends();
+				//渲染
+				renderFriends(allReadyFriends);
+			}
+			
+			/**
+			 * 对象通讯录部分渲染
+			 */
+			function renderFriends(allReadyFriends){
+				var contactAll='';
+				for(var name in allReadyFriends){
+					//假如这个组有数据才进行渲染
+					if(allReadyFriends[name].length>0){
+						contactAll +='<li data-group="'+name+'" class="mui-table-view-divider mui-indexed-list-group">'+name+'</li>';
+						//渲染这个组的成员
+						for(var i=0;i<allReadyFriends[name].length;i++){
+							var friendsInfo = allReadyFriends[name][i];
+							contactAll += renderSingleFriend(friendsInfo);
+						}
+					}
+					
+				}
+				
+				//加入节点中
+				var AllContactFriends = document.getElementById("AllContactFriends");
+				AllContactFriends.innerHTML = contactAll;
+				
+			}
+			
+			/**
+			 * 渲染单个朋友
+			 */
+			function renderSingleFriend(friendsInfo){
+				saveToContactMap(friendsInfo);				
+				var html ='<li class="mui-media mui-table-view-cell mui-indexed-list-item" style="padding: 10px 10px;" data-aa=11 friendsid='+ friendsInfo.id +'>'+
+						'<img class="mui-media-object mui-pull-left" src="'+app.imgServerUrl+friendsInfo.faceImage+'" style="max-width: 35px;height: 35px;border-radius: 8%;"/>'+
+						'<div class="mui-media-body" style="line-height: 35px;">'+friendsInfo.nickname+'</div>'+
+						'</li>';
+				return html;
+			}
+			
+			/**
+			 * 保存通讯录id和对象的map
+			 */
+			function saveToContactMap(friendsInfo){
+				contactMap.put(friendsInfo.id,friendsInfo);
+			}
+			
+			/**
+			 * 根据id取出这个对象
+			 */
+			function getContactById(id){
+				return contactMap.get(id);
+			}
+			
+			/**
+			 * 通讯录的map表 key是id value是对象
+ 			 */
+ 			var contactMap={};
+ 			
+			
+			/**
+			 * 调用后台，得到通讯录，并将数据分组，返回结果
+			 */
+			function getReadyRenderFriends(){
+				//请求后台
+				var userInfo = app.getGrobalUserInfo();
+				getFriends(userInfo.id);
+			}
+			
+			/**
+			 * 调用后台得到数据
+			 */
+			function getFriends(userId){
+				
+				mui.ajax(app.serverUrl+'/u/queryFriends',{
+					data:{
+						userId:userId
+					},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:10000,//超时时间设置为10秒；
+					headers:{'Content-Type':'application/x-www-form-urlencoded '},	              
+					success:function(res){
+						
+						plus.nativeUI.closeWaiting();
+						
+						if(res.status == 200){
+							var friends = res.data;
+							
+							//清空而二维数组
+							window.groupUtils.clearCharacter();
+							//对返回的朋友的数据进行分组
+							var groupReadyFriends = window.groupUtils.groupByFirstPinyin(friends);
+							//保存在缓存中
+							app.saveReadyGroupFriends(groupReadyFriends);
+							
+							//渲染通讯录
+							showList();
+						}else{
+							app.showToast(res.msg,"error");
+						}
+					},
+					error:function(){
+						plus.nativeUI.closeWaiting();
+						app.showToast("网络问题","error");
+					}
+				});
+				
+			}
+			
+			
 		</script>
 	</body>
 

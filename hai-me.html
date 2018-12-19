@@ -79,6 +79,11 @@
 					refreshUserInfo();
 				})
 				
+				//自定义刷新事件
+				window.addEventListener("refresh",function(){
+					refreshUserInfo();
+				})	
+				
 			})
 			
 			//头像按钮事件监控
@@ -112,14 +117,15 @@
 			logout.addEventListener("tap",function(){
 				//清除缓存
 				app.clearGrobalUserInfo();
+				
+				//关闭index.html
+				plus.webview.getWebviewById("index.html").close();
+				
 				//跳转页面
 				mui.openWindow("login.html","login.html");
 			});
 			
-			//自定义刷新事件
-			window.addEventListener("refresh",function(){
-				refreshUserInfo();
-			})				
+						
 
 			
 			function refreshUserInfo(){
@@ -149,8 +155,9 @@
 				if(!app.isBlank(faceImage)){
 					span_faceImage.src = app.imgServerUrl + faceImage;
 					console.log(span_faceImage.src+"  image.src");
+				}else{
+					span_faceImage.src = "";
 				}
-				
 			}
 			
 		</script>

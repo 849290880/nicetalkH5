@@ -142,7 +142,10 @@
 								app.saveGrobalUserInfo(userInfoJSON);
 								
 								//页面跳转
-								mui.openWindow("index.html","index.html");
+								mui.openWindow({
+									url:"index.html",
+									id:"index.html"
+								});
 								
 							}else{
 								app.showToast(res.msg,"error")

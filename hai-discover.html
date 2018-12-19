@@ -29,7 +29,7 @@
 		            <p class="mui-ellipsis" 
 		            	style="padding-left: 10px;line-height: 24px;color: #000000;">添加好友</p>
 			    </li>
-			    <li class="mui-table-view-cell mui-media">
+			    <li class="mui-table-view-cell mui-media" id="scanCode">
 		            <img class="mui-media-object mui-pull-left" src="image/scanscan.png" 
 		            	style="height: 24px;width: 24px;">
 		            <p class="mui-ellipsis" 
@@ -52,6 +52,15 @@
 					mui.openWindow({
 						url:"searchFriends.html",
 						id:"searchFriends.html",
+					});
+				})
+				
+				//事件监听扫一扫
+				var scanCode = document.getElementById("scanCode");
+				scanCode.addEventListener("tap",function(){
+					mui.openWindow({
+						url:"scanCode.html",
+						id:"scanCode.html",
 					});
 				})
 			})
