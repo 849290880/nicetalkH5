@@ -125,5 +125,128 @@
 				}
 			}
 		}
+	},
+	"dependencies": {
+		"pages": {
+			"login.html": {
+				"resources": [],
+				"refer": [
+					"login.html",
+					"index.html"
+				],
+				"priority": 0
+			},
+			"index.html": {
+				"resources": [
+					"hai-chatList.html"
+				],
+				"refer": [
+					"hai-discover.html",
+					"hai-me.html",
+					"hai-contact.html"
+				],
+				"priority": 0
+			},
+			"hai-me.html": {
+				"resources": [],
+				"refer": [
+					"myface.html",
+					"login.html"
+				],
+				"priority": 0
+			},
+			"myface.html": {
+				"resources": [],
+				"refer": [
+					"plugin/v3.1.6/myface-uploader.html"
+				],
+				"priority": 0
+			},
+			"hai-discover.html": {
+				"resources": [],
+				"refer": [
+					"searchFriends.html"
+				],
+				"priority": 0
+			},
+			"searchFriends.html": {
+				"resources": [],
+				"refer": [
+					"addFriends.html"
+				],
+				"priority": 0
+			},
+			"hai-contact.html": {
+				"resources": [],
+				"refer": [
+					"chatting.html"
+				],
+				"priority": 0
+			}
+		},
+		"idle": {
+			"resources": [
+				"fontico/demo_unicode.html",
+				"plugin/cropper/css/main.css",
+				"css/header.css",
+				"plugin/v3.1.6/images/picture.jpg",
+				"fontico/iconfont.woff",
+				"image/good.png",
+				"js/mui.js",
+				"js/map.js",
+				"README.md",
+				"css/chat.css",
+				"fontico/demo_symbol.html",
+				"plugin/v3.1.6/js/main.js",
+				"js/app.js",
+				"fonts/mui.ttf",
+				"mynickname.html",
+				"nicetalkclient/README.md",
+				"css/registLogin/util.css",
+				"image/addfriends.png",
+				"plugin/v3.1.6/js/cropper.js",
+				"css/mui.css",
+				"plugin/cropper/js/cropper.js",
+				"fontico/demo_fontclass.html",
+				"plugin/v3.1.6/index.html",
+				"plugin/cropper/js/main.js",
+				"image/scanscan.png",
+				"fontico/iconfont.svg",
+				"scanCode.html",
+				"fontico/iconfont.eot",
+				"plugin/v3.1.6/css/main.css",
+				"fontico/iconfont.css",
+				"mp3/di_didi.mp3",
+				"css/registLogin/main.css",
+				"image/givememoney.png",
+				"image/upload.png",
+				"image/error.png",
+				"plugin/v3.1.6/css/cropper.css",
+				"js/mui.min.js",
+				"image/friends.png",
+				"fontico/iconfont.js",
+				"mp3/send.mp3",
+				"js/groupHelper.js",
+				"js/mui.indexedlist.js",
+				"css/registLogin/arrow.jpg",
+				"image/bg.png",
+				"image/download.png",
+				"js/nickname.js",
+				"mp3/msn.mp3",
+				"fontico/demo.css",
+				"fontico/iconfont.ttf",
+				"plugin/cropper/images/picture.jpg",
+				"js/login.js",
+				"css/mui.indexedlist.css",
+				"plugin/cropper/css/cropper.css",
+				"plugin/cropper/index.html",
+				"image/face-default-cat.png",
+				"qrCode.html",
+				"css/mui.min.css",
+				"image/success.png",
+				"plugin/cropper/uploader.html",
+				"image/qrcode.png"
+			]
+		}
 	}
 }

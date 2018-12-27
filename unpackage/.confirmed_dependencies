@@ -1,1 +1,45 @@
-null
+{
+	"login.html": {
+		"refer": [
+			"login.html",
+			"index.html"
+		]
+	},
+	"index.html": {
+		"resources": [
+			"hai-chatList.html"
+		],
+		"refer": [
+			"hai-chatList.html",
+			"hai-discover.html",
+			"hai-me.html",
+			"hai-contact.html"
+		]
+	},
+	"hai-me.html": {
+		"refer": [
+			"myface.html",
+			"login.html"
+		]
+	},
+	"myface.html": {
+		"refer": [
+			"plugin/v3.1.6/myface-uploader.html"
+		]
+	},
+	"hai-discover.html": {
+		"refer": [
+			"searchFriends.html"
+		]
+	},
+	"searchFriends.html": {
+		"refer": [
+			"addFriends.html"
+		]
+	},
+	"hai-contact.html": {
+		"refer": [
+			"chatting.html"
+		]
+	}
+}

@@ -12,11 +12,13 @@
 		
 		<div class="mui-content">
 		    <ul class="mui-table-view" id="friendsList">
-		        
+		        <!--好友请求,使用js生成-->
+		        <!--聊天快照，使用js生成 -->
 		    </ul>
 		</div>
 				
 		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/map.js" ></script>
 		<script src="js/app.js"></script>
 		<script type="text/javascript">
 			mui.init();
@@ -63,13 +65,18 @@
 						
 						if(res.status == 200){
 							var friendsList = document.getElementById("friendsList");
-							friendsList.innerHTML = "";
 							//好友申请数组
 							var list = res.data;
 							var requestAll = "";
 							for(var i=0;i<list.length;i++){
 								requestAll += renderFriendRequest(list[i]);
 							}
+							
+							//渲染聊天快照
+							var chatSnapShotHtml = allChatRecord();
+							
+							// 将请求html + 聊天快照html 拼接起来
+							requestAll +=chatSnapShotHtml;
 							//渲染页面
 							friendsList.innerHTML=requestAll;
 							
@@ -83,6 +90,20 @@
 							mui(".operRequest").on("tap",'.ignore',function(e){
 								var friendsId = this.getAttribute("friendsId");
 								requestOperation(friendsId,userInfo.id,-1);
+							});
+							//绑定点击聊天事件
+							mui(".shapChat").on("tap",".chat",function(){
+								var friendsId = this.getAttribute("friendsid");
+								var friendsInfo = contactMap.get(friendsId);
+								//打开对应的页面
+								var chatWindowId = "chatList_"+friendsInfo.id;
+								mui.openWindow({
+									url:"chatting.html",
+									id:chatWindowId,
+									extras:{
+										friendsInfo:friendsInfo
+									}
+								});	
 							});
 							
 						}else{
@@ -112,6 +133,39 @@
 					'</li>';
 				return html;
 			}
+			
+			
+			//返回聊天的html
+			function allChatRecord(){
+				
+				//聊天快照渲染
+				var html = '';
+				
+				//从缓存中取出list,加入html中
+				var list = app.getSnapShotList();
+				for(var i=0;i<list.length;i++){
+					var shapChatShop = list[i];
+					html += chatSnapshot(shapChatShop.friendInfo,shapChatShop.lastestContent);
+				}
+				return html;
+			}
+			
+			//聊天快照片段
+			function chatSnapshot(friendInfo,lastestContent){
+				var html = "";
+				
+			    html =	'<li class="mui-table-view-cell mui-media shapChat">' +
+			               ' <a href="javascript:;" class="chat" friendsid="'+friendInfo.id +'">' +
+			                    '<img class="mui-media-object mui-pull-left" src="'+app.imgServerUrl+ friendInfo.faceImage+'">' +
+			                    '<div class="mui-media-body">' +
+			                        friendInfo.nickname +
+			                       ' <p class="mui-ellipsis">'+lastestContent+'</p>' +
+			                    '</div>' +
+			                '</a>' +
+			            '</li>';
+				return html;
+			}
+			
 			
 			//同意或者忽略请求的函数
 			function requestOperation(friendsId,userId,operType){
@@ -186,7 +240,18 @@
 	            	CHAT.socket.send(msg);
 	            },
 	            socketOpen: function(){
-	            	console.log("连接上了。。。");
+//	            	console.log("连接上了。。。");
+	            	
+	            	var userInfo = app.getGrobalUserInfo();
+	            	// 组装数据   ChatMsgEntity
+	            	dataMsgEntity = new app.ChatMsgEntity(userInfo.id,null,null,null);
+	            	
+	            	// 组装数据 DataContent
+	            	dataContent = new app.DataContent(app.CONNECT,dataMsgEntity);
+					
+	            	//发送第一次（或者重连的数据）给后台
+	            	CHAT.chat(JSON.stringify(dataContent));
+	            	
 	            },
 	            socketClose: function(){
 	            	console.log("连接关闭了 。。。");
@@ -196,12 +261,26 @@
 	            },
 	            socketMessage: function (e) {
                     console.log("接收到消息:" + e.data);
-                    //暂时转发给自己和朋友互相聊天的界面
-                    //TODO 动态改变webviewID
-                    var chattingWebview = plus.webview.getWebviewById("chatList_181212AFN2S3G4SW");
                     
-                    chattingWebview.evalJS("receiveMsg('"+e.data+"')");
-                    chattingWebview.evalJS("showLastMsg()");
+                    //暂时转发给自己和朋友互相聊天的界面
+                    
+                    var chatMsg = JSON.parse(e.data);
+                    var msg = chatMsg.msg;
+                    var senderId = chatMsg.senderId;
+                    
+                    // 动态改变webviewID
+                    var chattingWebview = plus.webview.getWebviewById("chatList_" + senderId);
+                    
+                    
+                    if(chattingWebview != null){
+                    	chattingWebview.evalJS("receiveMsg('"+msg+"')");
+                    	chattingWebview.evalJS("showLastMsg()");
+                    }
+                    
+                    // 单条消息签收
+                    var dataContent =new app.DataContent(app.SIGNED,null,chatMsg.msgId);
+                    
+                    CHAT.chat(JSON.stringify(dataContent));
                 }
 	        }
 			

@@ -79,89 +79,93 @@
 		<script type="text/javascript" src="js/app.js" ></script>
 		<script type="text/javascript">
 			
-			//清楚一下缓存
-//			plus.storage.removeItem("userInfo");
 			
-			//当缓存里面有用户登录数据，自动登录
-			var userInfo = app.getGrobalUserInfo();
-			console.log(JSON.stringify(userInfo));
-			
-			if(userInfo!=null){
-				mui.openWindow("index.html","index.html");
-			}
-					
-			var userform = document.getElementById("userform");
-			var username = document.getElementById("username");
-			var txt_password = document.getElementById("txt_password");
-			
-			
-			
-			userform.addEventListener("submit",function(e){
-				//判断用户名或者密码是否为空
-				if(app.isBlank(username.value)){
-					username.focus();
-				}else if(app.isBlank(txt_password.value)){
-					txt_password.focus();
-				}else{
-					
-					//检验用户名和密码的合法性
-					if(username.value.length>12){
-						app.showToast("用户名长度不能大于12","error");
-						return false;
-					}
-					if(txt_password.value.length>12){
-						app.showToast("密码长度不能大于12","error");
-						return false;
-					}
-					
-					//获取每台手机的唯一cid
-					var cid = plus.push.getClientInfo().clientid;
-					
-					//后端联调
-					mui.ajax(app.serverUrl+'/u/loginOrRegist',{
-						data:{
-							username:username.value,
-							password:txt_password.value,
-							cid:cid
-						},
-						dataType:'json',//服务器返回json格式数据
-						type:'post',//HTTP请求类型
-						timeout:10000,//超时时间设置为10秒；
-						headers:{'Content-Type':'application/json'},	              
-						success:function(res){
-							//服务器返回响应结果
-							console.log(JSON.stringify(res.data));
-							
-							username.blur();
-							txt_password.blur();
-							
-							if(res.status == 200){
-								
-								//登录或者注册成功
-								var userInfoJSON = res.data;
-								app.saveGrobalUserInfo(userInfoJSON);
-								
-								//页面跳转
-								mui.openWindow({
-									url:"index.html",
-									id:"index.html"
-								});
-								
-							}else{
-								app.showToast(res.msg,"error")
-							}
-						},
-						error:function(xhr,type,errorThrown){
-							//异常处理；
-							console.log(type);
-						}
-					});
-					
-				}
+			mui.plusReady(function(){
+				//清楚一下缓存
+	//			plus.storage.removeItem("userInfo");
 				
-				//阻止的默认事件提交
-				e.preventDefault();
+				//当缓存里面有用户登录数据，自动登录
+				var userInfo = app.getGrobalUserInfo();
+//				console.log(JSON.stringify(userInfo));
+				
+				if(userInfo!=null){
+					mui.openWindow("index.html","index.html");
+				}
+						
+				var userform = document.getElementById("userform");
+				var username = document.getElementById("username");
+				var txt_password = document.getElementById("txt_password");
+				
+				
+				
+				userform.addEventListener("submit",function(e){
+					//判断用户名或者密码是否为空
+					if(app.isBlank(username.value)){
+						username.focus();
+					}else if(app.isBlank(txt_password.value)){
+						txt_password.focus();
+					}else{
+						
+						//检验用户名和密码的合法性
+						if(username.value.length>12){
+							app.showToast("用户名长度不能大于12","error");
+							return false;
+						}
+						if(txt_password.value.length>12){
+							app.showToast("密码长度不能大于12","error");
+							return false;
+						}
+						
+						//获取每台手机的唯一cid
+						var cid = plus.push.getClientInfo().clientid;
+						
+						//后端联调
+						mui.ajax(app.serverUrl+'/u/loginOrRegist',{
+							data:{
+								username:username.value,
+								password:txt_password.value,
+								cid:cid
+							},
+							dataType:'json',//服务器返回json格式数据
+							type:'post',//HTTP请求类型
+							timeout:10000,//超时时间设置为10秒；
+							headers:{'Content-Type':'application/json'},	              
+							success:function(res){
+								//服务器返回响应结果
+								console.log(JSON.stringify(res.data));
+								
+								username.blur();
+								txt_password.blur();
+								
+								if(res.status == 200){
+									
+									//登录或者注册成功
+									var userInfoJSON = res.data;
+									app.saveGrobalUserInfo(userInfoJSON);
+									
+									//页面跳转
+									mui.openWindow({
+										url:"index.html",
+										id:"index.html"
+									});
+									
+								}else{
+									app.showToast(res.msg,"error")
+								}
+							},
+							error:function(xhr,type,errorThrown){
+								//异常处理；
+//								console.log(type);
+							}
+						});
+						
+					}
+					
+					//阻止的默认事件提交
+					e.preventDefault();
+				})
 			})
+			
 			
 		</script>
 

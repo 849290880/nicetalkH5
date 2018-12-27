@@ -31,7 +31,7 @@
 		<div id="msg-outter" class="mui-content">
 			<div id='msg'>
 				
-				<div class="friend_lists">
+				<!--<div class="friend_lists">
 					<div class="header_img">
 						<img src="image/face-default-cat.png" width="40px" height="40px" />
 					</div>
@@ -40,14 +40,6 @@
 					</div>
 				</div>
 
-				<div class="me_lists">
-					<div class="header_img">
-						<img src="image/face-default-cat.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper left">
-						<p class="msg-right-green">好的，没问题！时间地点？</p>
-					</div>
-				</div>
 				
 				<div class="me_lists">
 					<div class="header_img">
@@ -56,88 +48,7 @@
 					<div class="msg-wrapper left">
 						<p class="msg-right-green">好的，没问题！时间地点？</p>
 					</div>
-				</div>
-				
-				<div class="me_lists">
-					<div class="header_img">
-						<img src="image/face-default-cat.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper left">
-						<p class="msg-right-green">好的，没问题！时间地点？</p>
-					</div>
-				</div>
-				
-				<div class="me_lists">
-					<div class="header_img">
-						<img src="image/face-default-cat.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper left">
-						<p class="msg-right-green">好的，没问题！时间地点？</p>
-					</div>
-				</div>
-				
-				<div class="me_lists">
-					<div class="header_img">
-						<img src="image/face-default-cat.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper left">
-						<p class="msg-right-green">好的，没问题！时间地点？</p>
-					</div>
-				</div>
-				
-				<div class="me_lists">
-					<div class="header_img">
-						<img src="image/face-default-cat.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper left">
-						<p class="msg-right-green">好的，没问题！时间地点？</p>
-					</div>
-				</div>
-				
-				<div class="me_lists">
-					<div class="header_img">
-						<img src="image/face-default-cat.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper left">
-						<p class="msg-right-green">好的，没问题！时间地点？</p>
-					</div>
-				</div>
-				
-				<div class="me_lists">
-					<div class="header_img">
-						<img src="image/face-default-cat.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper left">
-						<p class="msg-right-green">好的，没问题！时间地点？</p>
-					</div>
-				</div>
-				
-				<div class="me_lists">
-					<div class="header_img">
-						<img src="image/face-default-cat.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper left">
-						<p class="msg-right-green">好的，没问题！时间地点？</p>
-					</div>
-				</div>
-				
-				<div class="me_lists">
-					<div class="header_img">
-						<img src="image/face-default-cat.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper left">
-						<p class="msg-right-green">好的，没问题！时间地点？</p>
-					</div>
-				</div>
-				
-				<div class="me_lists">
-					<div class="header_img">
-						<img src="image/face-default-cat.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper left">
-						<p class="msg-right-green">好的，没问题！时间地点？</p>
-					</div>
-				</div>
+				</div>-->
 
 			</div>
 		</div>
@@ -165,6 +76,9 @@
 				//设置软键盘的样式
 				setKeyBoard();
 				
+				//加载聊天记录
+				loadChatRecord();
+				
 				//显示最新的消息
 				showLastMsg();
 
@@ -176,6 +90,60 @@
 				//监听输入框的内容的改变
 				listenInput();
 			})
+			
+			
+			/**
+			 * 加载聊天记录
+			 */
+			function loadChatRecord(){
+				
+				var friendsInfo = getFriendsInfo();
+				var userInfo = app.getGrobalUserInfo();
+				//从缓存中取出聊天记录
+				var chatRecordList = app.getChatRecord(userInfo.id,friendsInfo.id);
+				
+				alert(chatRecordList.length);
+				
+				//=======================渲染聊天记录========================================
+				
+				var msg = document.getElementById("msg");
+				
+				var html='';
+				
+				for(var i=0;i<chatRecordList.length;i++){
+					var chatRecordObject = chatRecordList[i];
+					if(chatRecordObject.flag==app.FRIEND_CHAT_RECORD){
+						//渲染朋友的聊天
+						html+='<div class="friend_lists">'+
+								'<div class="header_img">'+
+									'<img src="'+app.imgServerUrl+friendsInfo.faceImage+'" width="40px" height="40px" />'+
+								'</div>'+
+								'<div class="msg-wrapper right">'+
+									'<p class="msg-left-white">'+chatRecordObject.content+'</p>'+
+								'</div>'+
+							'</div>';
+					}
+					
+					if(chatRecordObject.flag==app.MY_CHAT_RECORD){
+						//渲染自己的聊天
+						html+='<div class="me_lists">'+
+								'<div class="header_img">'+
+									'<img src="'+app.imgServerUrl+userInfo.faceImage+'" width="40px" height="40px" />'+
+								'</div>'+
+								'<div class="msg-wrapper left">'+
+									'<p class="msg-right-green">'+chatRecordObject.content+'</p>'+
+								'</div>'+
+							'</div>';
+					}
+					
+					msg.innerHTML = html;
+					
+					
+//					var key = "chat-"+ userInfo.id + "-" + friendsInfo.id;
+//					plus.storage.removeItem(key);
+					
+				}
+			}
 			
 			
 			/**
@@ -247,7 +215,16 @@
 					
 					//向netty服务器发送消息
 					var wsWebview = plus.webview.getWebviewById("hai-chatList.html");
-					wsWebview.evalJS("CHAT.chat('"+content+"')");
+					
+					// 构造发送消息模型
+					//接收方的id
+					var receiverId = getFriendsInfo().id;
+	            	// 组装数据   ChatMsgEntity
+	            	dataMsgEntity = new app.ChatMsgEntity(userInfo.id,receiverId,content,null);
+	            	
+	            	// 组装数据 DataContent
+	            	dataContent = new app.DataContent(app.CHAT,dataMsgEntity);
+					wsWebview.evalJS("CHAT.chat('"+JSON.stringify(dataContent)+"')");
 					
 					//模拟消息接收
 //					receiveMsg("模拟消息接收");
@@ -271,6 +248,15 @@
 				
 				//播发发送消息的音频
 				playSendAudio();
+				
+				var userInfo = app.getGrobalUserInfo();
+				var friendInfo = getFriendsInfo();
+				
+				//将聊天记录保存在缓存中
+				app.saveChatRecord(userInfo.id,friendInfo.id,content,app.MY_CHAT_RECORD);
+				
+				//更新快照
+				app.saveShapChatShopToList(friendInfo,content);
 			}
 			
 			/**
@@ -308,6 +294,11 @@
 				
 				//播放接收消息的音频
 				playReceiveAudio();
+				
+				
+				var userInfo = app.getGrobalUserInfo();
+				//将聊天记录保存在缓存中
+				app.saveChatRecord(userInfo.id,friendsInfo.id,content,app.FRIEND_CHAT_RECORD);
 			}
 			
 			
